@@ -26,8 +26,8 @@ jobs:
         run: pip install requests matplotlib
 
       - name: Run threat graph generator
-        run: |
-          python debian_threat_graph.py
+        run: python debian_threat_graph.py
+
         env:
           OTX_KEY: ${{ secrets.OTX_KEY }}
 
