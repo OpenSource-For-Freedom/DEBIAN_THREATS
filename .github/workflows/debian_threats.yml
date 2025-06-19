@@ -1,0 +1,41 @@
+# File: .github/workflows/debian_threats.yml
+
+name: Generate Debian Threat Graph
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * 1'
+
+jobs:
+  generate-graph:
+    runs-on: ubuntu-latest
+    env:
+      OTX_KEY: ${{ secrets.OTX_KEY }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests matplotlib
+
+      - name: Run threat graph generator
+        run: |
+          python scripts/debian_threat_graph.py
+        env:
+          OTX_KEY: ${{ secrets.OTX_KEY }}
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add DEBIAN_THREATS.md debian_threats.png
+          git commit -m "Update Debian Threats Graph" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.ACTIONS_KEY }}@github.com/${{ github.repository }}.git HEAD:main
+
