@@ -1,6 +1,8 @@
 # Debian Threats Report
 
-_Last updated: 2025-06-19T13:21:43.713674 UTC_
+_Last updated: 2025-06-19T13:27:58.306829 UTC_
+
+<p align="center"><img src="HARDN%20(1).png" width="180" alt="Project Logo"></p>
 
 ![Debian Threats by Year](threats_by_year.png)
 
