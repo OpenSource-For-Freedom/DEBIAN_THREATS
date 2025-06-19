@@ -1,4 +1,3 @@
-# File: .github/workflows/debian_threats.yml
 
 name: Generate Debian Threat Graph
 
@@ -7,15 +6,31 @@ on:
   schedule:
     - cron: '0 5 * * 1'  # Every Monday at 05:00 UTC
 
+# Grant Action permission to push changes\ npermissions:
+  contents: write
+
 jobs:
   generate-graph:
     runs-on: ubuntu-latest
+    # Ensure contents write permission is set at job level when needed
+    permissions:
+      contents: write
+
     env:
       OTX_KEY: ${{ secrets.OTX_KEY }}
+      VULN_KEY: ${{ secrets.VULN_KEY }}
+      CVSS_MIN: 0
+      DATE_FROM: ''
+      DATE_TO: ''
+      OTX_PAGES: 3
+      VULN_SIZE: 20
+      CACHE_TTL_DAYS: 1
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ACTIONS_KEY }}  # Use PAT with write access
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,7 +38,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install requests matplotlib
+        run: pip install requests matplotlib pillow
 
       - name: Debug – list repo files
         run: ls -R
@@ -32,11 +47,18 @@ jobs:
         run: python debian_threat_graph.py
         env:
           OTX_KEY: ${{ secrets.OTX_KEY }}
+          VULN_KEY: ${{ secrets.VULN_KEY }}
+          CVSS_MIN: ${{ env.CVSS_MIN }}
+          DATE_FROM: ${{ env.DATE_FROM }}
+          DATE_TO:   ${{ env.DATE_TO }}
+          OTX_PAGES: ${{ env.OTX_PAGES }}
+          VULN_SIZE: ${{ env.VULN_SIZE }}
+          CACHE_TTL_DAYS: ${{ env.CACHE_TTL_DAYS }}
 
-      - name: Commit and push changes to README and graphs
+      - name: Commit and push changes
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add README.md *.png *.json || true
-          git commit -m "Update README with Debian Threat Report" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.ACTIONS_KEY }}@github.com/${{ github.repository }}.git HEAD:main
+          git add README.md *.png threat_cache.json || true
+          git commit -m "Update README with Linux Kernel Threat Report" || echo "No changes to commit"
+          git push origin main
