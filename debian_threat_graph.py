@@ -158,7 +158,7 @@ def generate_tables(threats, per_page=5):
 
 def write_to_readme(tabs):
     with open("README.md","w", encoding="utf-8") as f:
-        f.write(f"# Linux Kernel Threats Report\n\n_Last updated: {datetime.utcnow().isoformat()}_\n\n")
+        f.write(f"# Debian Threat Database\n\n_Last updated: {datetime.utcnow().isoformat()}_\n\n")
         f.write(f'<p align="center"><img src="{LOGO_URL}" width="180"></p>\n\n')
         f.write("![Threats](threats_by_year.png)\n\n![Trend](threat_trend_line.png)\n\n## Data Table\n\n")
         for b in tabs:
