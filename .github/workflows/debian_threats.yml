@@ -1,3 +1,4 @@
+# File: .github/workflows/debian_threats.yml
 
 name: Generate Debian Threat Graph
 
@@ -6,15 +7,15 @@ on:
   schedule:
     - cron: '0 5 * * 1'  # Every Monday at 05:00 UTC
 
-# Grant Action permission to push changes\ npermissions:
+
+permissions:
   contents: write
 
 jobs:
   generate-graph:
     runs-on: ubuntu-latest
-    # Ensure contents write permission is set at job level when needed
     permissions:
-      contents: write
+      contents: write  
 
     env:
       OTX_KEY: ${{ secrets.OTX_KEY }}
@@ -30,7 +31,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.ACTIONS_KEY }}  # Use PAT with write access
+          token: ${{ secrets.ACTIONS_KEY }}  
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -62,3 +63,4 @@ jobs:
           git add README.md *.png threat_cache.json || true
           git commit -m "Update README with Linux Kernel Threat Report" || echo "No changes to commit"
           git push origin main
+
