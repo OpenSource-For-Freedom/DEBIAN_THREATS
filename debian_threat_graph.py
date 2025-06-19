@@ -14,6 +14,8 @@ OTX_URL = "https://otx.alienvault.com/api/v1/search/pulses"
 HEADERS = {"X-OTX-API-KEY": OTX_KEY}
 PARAMS = {"q": "debian vulnerability cve", "page": 1}
 LOGO_PATH = "HARDN (1).png"
+LOGO_URL = "HARDN%20(1).png"  # relative path
+
 
 def fetch_threats():
     if os.path.exists(CACHE_FILE):
@@ -30,6 +32,7 @@ def fetch_threats():
 
     return results
 
+
 def extract_year_counts(threats):
     years = []
     for threat in threats:
@@ -42,6 +45,7 @@ def extract_year_counts(threats):
                 continue
     return Counter(years)
 
+
 def add_logo_to_plot(ax, fig):
     if os.path.exists(LOGO_PATH):
         logo = mpimg.imread(LOGO_PATH)
@@ -51,6 +55,7 @@ def add_logo_to_plot(ax, fig):
         x_offset = int(fig_width - logo_width - 10)
         y_offset = int(fig_height - logo_height - 10)
         fig.figimage(logo, xo=x_offset, yo=y_offset, alpha=0.25, zorder=10)
+
 
 def plot_main_graph(year_counter):
     full_years = list(range(2005, 2026))
@@ -74,6 +79,7 @@ def plot_main_graph(year_counter):
     plt.savefig("threats_by_year.png")
     plt.close()
 
+
 def plot_trend_graph(year_counter):
     full_years = list(range(2005, 2026))
     counts = [year_counter.get(y, 0) for y in full_years]
@@ -92,15 +98,18 @@ def plot_trend_graph(year_counter):
     plt.savefig("threat_trend_line.png")
     plt.close()
 
+
 def write_to_readme(table_blocks):
     with open("README.md", "w", encoding="utf-8") as f:
         f.write("# Debian Threats Report\n\n")
         f.write(f"_Last updated: {datetime.utcnow().isoformat()} UTC_\n\n")
+        f.write(f'<p align="center"><img src="{LOGO_URL}" width="180" alt="Project Logo"></p>\n\n')
         f.write("![Debian Threats by Year](threats_by_year.png)\n\n")
         f.write("![Threat Trend](threat_trend_line.png)\n\n")
         f.write("## Threat Table\n\n")
         for block in table_blocks:
             f.write(block + "\n\n")
+
 
 def generate_tables(threats, per_page=5):
     table_md_blocks = []
@@ -120,6 +129,7 @@ def generate_tables(threats, per_page=5):
         table_md_blocks.append("\n".join(table_md))
     return table_md_blocks
 
+
 def main():
     if not OTX_KEY:
         raise EnvironmentError("OTX_KEY environment variable is not set")
@@ -135,6 +145,7 @@ def main():
     tables = generate_tables(threats)
     write_to_readme(tables)
     print("README.md updated with Debian threat graphs and tables.")
+
 
 if __name__ == "__main__":
     main()
