@@ -27,7 +27,7 @@ jobs:
 
       - name: Run threat graph generator
         run: |
-          python scripts/debian_threat_graph.py
+          python debian_threat_graph.py
         env:
           OTX_KEY: ${{ secrets.OTX_KEY }}
 
